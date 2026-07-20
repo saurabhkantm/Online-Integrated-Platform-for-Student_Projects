@@ -1,48 +1,52 @@
-import React, { useEffect, useState } from 'react'
-import {register,login,logout,getCurrentUser} from '../services/authService'
+import React, { createContext, useEffect, useState } from 'react';
+import { registerUser, loginUser, logoutUser, getCurrentUser } from '../services/authService';
 
-const AuthContext = ({children}) => {
-    const [user,setUser] = useState(null);
-    const [role,setRole] = useState(null);
-    const [loading,setLoading] = useState(false);
-    
-    useEffect(()=>{
-        const restoresession = async()=>{
-            try{
-                const currentuser = await getCurrentUser();
-                if(currentuser){
-                    setUser(currentuser);
-                    setRole(currentuser.role);
-                }
-            }catch(err){
-                setUser(null);
-                setRole(null);
-            }finally{
-                setLoading(false);
-            }
-        };
-        restoresession();
-    },[]);
-    const register = async(userData)=>{
-        const newUser = await register(userData);
-        return newUser;
-    }
-    const login = async(credentials,expectedRole)=>{
-        const loginUser = await login(credentials,expectedRole);
-        setUser(loginUser.user);
-        setRole(loginUser.user.role);
-        return loginUser;
-    }
-    const logout = async()=>{
-        await logout();
+export const AuthContext = createContext(null);
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setRole(currentUser.role);
+        }
+      } catch (err) {
         setUser(null);
         setRole(null);
-    }
-    return (
-    <AuthContext.Provider value={{role,user,loading,register,login,logout,getCurrentUser}}>
-    {children}
-    </AuthContext.Provider>
-  )
-}
+      } finally {
+        setLoading(false);
+      }
+    };
+    restoreSession();
+  }, []);
 
-export default AuthContext;
+  const register = async (userData) => {
+    const newUser = await registerUser(userData);
+    return newUser;
+  };
+
+  const login = async (credentials, expectedRole) => {
+    const loggedInUser = await loginUser(credentials, expectedRole);
+    setUser(loggedInUser);
+    setRole(loggedInUser.role);
+    return loggedInUser;
+  };
+
+  const logout = async () => {
+    await logoutUser();
+    setUser(null);
+    setRole(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ role, user, loading, register, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
