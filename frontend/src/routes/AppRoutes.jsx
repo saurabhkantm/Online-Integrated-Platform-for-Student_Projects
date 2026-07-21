@@ -15,6 +15,7 @@ import AdminRoutes from './AdminRoute'
 import Register from '../pages/auth/Register'
 import HomePage from '../pages/shared/Homepage'
 import AboutUs from '../pages/shared/Aboutus'
+import LoginForm from '../pages/auth/Login'
 
 const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const AppRoutes = () => {
       <Route path="/login/faculty" element={<FacultyLogin />} />
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<LoginForm/>}/>
 
       {/* role protected route groups */}
       <Route element={<ProtectedRoute allowedRoles={['student']} />}>
