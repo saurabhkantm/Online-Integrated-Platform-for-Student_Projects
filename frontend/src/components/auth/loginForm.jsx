@@ -68,7 +68,7 @@ const LoginForm = () => {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-2 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-semibold text-sm hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        className="mt-2 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-serif font-semibold text-[16px] hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
         {submitting ? "Logging in..." : "Log in"}
       </button>

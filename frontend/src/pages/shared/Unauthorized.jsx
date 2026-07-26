@@ -1,9 +1,40 @@
-import React from 'react'
+import { Link } from "react-router-dom";
+import { ShieldAlert } from "lucide-react";
 
 const Unauthorized = () => {
   return (
-    <div>Unauthorized</div>
-  )
-}
+    <div className="min-h-screen bg-[#F7F5F0] flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#1B2340]/10 mb-6">
+        <ShieldAlert size={26} className="text-[#1B2340]" />
+      </div>
 
-export default Unauthorized
+      <span className="text-xs tracking-[0.2em] uppercase text-[#F0A868] font-semibold">
+        Access denied
+      </span>
+      <h1 className="font-serif text-3xl text-[#1B2340] mt-2 mb-2">
+        You don't have access to this page
+      </h1>
+      <p className="text-sm text-[#6B7280] max-w-sm mb-8">
+        This page is restricted to a different role, or you need to sign in
+        first. If you think this is a mistake, contact your administrator.
+      </p>
+
+      <div className="flex gap-3">
+        <Link
+          to="/"
+          className="px-6 py-3 rounded-lg bg-[#1B2340] text-[#F7F5F0] text-sm font-medium hover:bg-[#232B4D] transition"
+        >
+          Back to home
+        </Link>
+        <Link
+          to="/login"
+          className="px-6 py-3 rounded-lg border border-[#1B2340] text-[#1B2340] text-sm font-medium hover:bg-white transition"
+        >
+          Sign in
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Unauthorized;
