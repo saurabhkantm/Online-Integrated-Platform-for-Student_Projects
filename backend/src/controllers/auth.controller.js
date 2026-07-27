@@ -55,7 +55,7 @@ export async function registerUser(req, res) {
     console.log("Error message: ", error);
     return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error
     });
   }
 }
