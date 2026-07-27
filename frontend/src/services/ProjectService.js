@@ -1,0 +1,31 @@
+import api from "./api";
+
+export const getMyProjects = async()=>{
+    const res = await api.get("/api/projects/my-projects");
+    return res.data.project;
+}
+
+export const createProject = async(projectData)=>{
+    const res = await api.post("/api/projects",projectData);
+    return res.data.project;
+}
+
+export const getSingleProject = async(id)=>{
+    const res = await api.get(`/api/projects/${id}`);
+    return res.data.project;
+}
+
+export const updateProject = async (id, projectData) => {
+  const res = await api.patch(`/api/projects/update/${id}`, projectData);
+  return res.data.project;
+};
+
+export const submitProject = async (id) => {
+  const res = await api.patch(`/api/projects/${id}/submit`);
+  return res.data.project;
+};
+
+export const deleteProject = async (id) => {
+  const res = await api.delete(`/api/projects/delete/${id}`);
+  return res.data;
+};
