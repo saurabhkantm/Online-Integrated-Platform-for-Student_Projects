@@ -6,7 +6,7 @@ import {
 
 const organizationRouter = express.Router();
 
-organizationRouter.post("/", createOrganization);
-organizationRouter.get("/", getOrganizations);
+organizationRouter.post("/setOrg", createOrganization);
+organizationRouter.get("/getOrg", getOrganizations);
 
 export default organizationRouter;
