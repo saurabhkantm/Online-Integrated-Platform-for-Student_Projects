@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Building2, Mail, Lock } from "lucide-react";
+import { User, Building2, Mail, Lock, ChevronDown } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getOrganization } from "../../services/organizationService.js";
 
@@ -23,7 +23,6 @@ const RegisterForm = () => {
     const fetchOrgs = async () => {
       try {
         const data = await getOrganization();
-        // Handle whichever shape the backend actually returns
         if (Array.isArray(data)) {
           setOrganizations(data);
         } else if (Array.isArray(data?.organizations)) {
@@ -98,17 +97,22 @@ const RegisterForm = () => {
           value={organization}
           onChange={(e) => setOrganization(e.target.value)}
           required
-          className={`${inputBase} appearance-none`}
+          disabled={organizations.length === 0}
+          className={`${inputBase} appearance-none disabled:opacity-50 disabled:cursor-not-allowed [&>option]:bg-white [&>option]:text-[#1B2340] [&>option]:py-2`}
         >
-          <option value="">
-            {organizations.length === 0 ? "No colleges available" : "Select your college"}
+          <option value="" disabled>
+            {organizations.length === 0 ? "No colleges available yet" : "Select your college"}
           </option>
           {organizations.map((org) => (
-            <option key={org._id} value={org._id}>
+            <option key={org._id} value={org._id} className="bg-white text-[#ba7a3e]">
               {org.name}
             </option>
           ))}
         </select>
+        <ChevronDown
+          size={16}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none"
+        />
       </div>
 
       <div className="relative">

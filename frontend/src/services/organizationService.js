@@ -5,6 +5,12 @@ const api = axios.create({
 })
 
 export const getOrganization = async()=>{
-    const res = await api.get("/api/organizations/");
+    const res = await api.get("/api/organizations/getOrg");
     return res.data;
+}
+
+export const setOrganization = async(orgdata)=>{
+    const res = await api.post("/api/organizations/setOrg",orgdata);
+    console.log(res);
+    return res.data
 }
