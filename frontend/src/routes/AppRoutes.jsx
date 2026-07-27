@@ -3,9 +3,6 @@ import { Routes, Route } from 'react-router-dom'
 import BrowseProjects from '../pages/browse/BrowseProjects'
 import ProjectDetailsPage from '../pages/browse/ProjectDetailsPage'
 import PeerLearning from '../pages/browse/PeerLearning'
-import StudentLogin from '../pages/auth/StudentLogin'
-import FacultyLogin from '../pages/auth/FacultyLogin'
-import AdminLogin from '../pages/auth/AdminLogin'
 import NotFound from '../pages/shared/NotFound'
 import Unauthorized from '../pages/shared/Unauthorized'
 import ProtectedRoute from "../pages/auth/ProtectedRoute";
@@ -28,9 +25,6 @@ const AppRoutes = () => {
       <Route path="/peer-learning" element={<PeerLearning />} />
 
       {/* auth routes */}
-      <Route path="/login/student" element={<StudentLogin />} />
-      <Route path="/login/faculty" element={<FacultyLogin />} />
-      <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<LoginForm/>}/>
 

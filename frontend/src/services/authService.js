@@ -1,33 +1,39 @@
-import axios from 'axios';
-export const loginUser = async (email, password) => {
-    const response = await axios.post(`${process.env.BACKEND_URL}/api/auth/login`,{
-            email,
-            password
-    });
-    localStorage.setItem('token',response.data.token);
-    return response.data;
-}
+import axios from "axios";
 
-export const registerUser = async(name, email, password, role, organization) => {
-    const response = await axios.post(`${process.env.BACKEND_URL}/api/auth/register`,{
-        name,
-        email,
-        password,
-        role,
-        organization
-    });
-    localStorage.setItem('token',response.data.token);
-    return response.data;
-}
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+});
 
-export const logoutUser = async()=>{
-    localStorage.removeItem('token');
-}
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export const getCurrentUser = async()=>{
-    const token = localStorage.getItem('token');
-    if(!token){
-        return null;
-    }
-    return token;
-}
+export const loginUser = async (credentials, expectedRole) => {
+  const response = await api.post("/api/auth/login", {
+    ...credentials,
+    role: expectedRole,
+  });
+  localStorage.setItem("token", response.data.token);
+  return response.data.user;
+};
+
+export const registerUser = async (userData) => {
+  const response = await api.post("/api/auth/register", userData);
+  return response.data.user;
+};
+
+export const logoutUser = async () => {
+  localStorage.removeItem("token");
+};
+
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  const response = await api.get("/api/auth/me");
+  console.log("response of current user",response);
+  return response.data;
+};

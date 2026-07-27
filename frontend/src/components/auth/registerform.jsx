@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Building2, Mail, Lock } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
+import { getOrganization } from "../../services/organizationService.js";
 
 const registerRoles = ["student", "faculty"];
 
@@ -11,11 +12,35 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [organization, setOrganization] = useState("");
+  const [organizations, setOrganizations] = useState([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      try {
+        const data = await getOrganization();
+        // Handle whichever shape the backend actually returns
+        if (Array.isArray(data)) {
+          setOrganizations(data);
+        } else if (Array.isArray(data?.organizations)) {
+          setOrganizations(data.organizations);
+        } else if (Array.isArray(data?.data)) {
+          setOrganizations(data.data);
+        } else {
+          console.error("Unexpected organizations response shape:", data);
+          setOrganizations([]);
+        }
+      } catch (err) {
+        console.error("Failed to load organizations", err);
+        setOrganizations([]);
+      }
+    };
+    fetchOrgs();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,13 +59,6 @@ const RegisterForm = () => {
 
   const inputBase =
     "w-full pl-11 pr-4 py-3 rounded-lg border border-[#E2E4EA] bg-white text-sm text-[#1B2340] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1B2340]/15 focus:border-[#1B2340] transition-all duration-200";
-
-  const fields = [
-    { icon: User, type: "text", placeholder: "Full name", value: name, onChange: setName },
-    { icon: Building2, type: "text", placeholder: "College / Organization", value: organization, onChange: setOrganization },
-    { icon: Mail, type: "email", placeholder: "Email", value: email, onChange: setEmail },
-    { icon: Lock, type: "password", placeholder: "Password", value: password, onChange: setPassword },
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 w-full">
@@ -61,22 +79,61 @@ const RegisterForm = () => {
         ))}
       </div>
 
-      {fields.map(({ icon: Icon, type, placeholder, value, onChange }) => (
-        <div key={placeholder} className="relative">
-          <Icon
-            size={17}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
-          />
-          <input
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            required
-            className={inputBase}
-          />
-        </div>
-      ))}
+      <div className="relative">
+        <User size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+        <input
+          type="text"
+          placeholder="Full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className={inputBase}
+        />
+      </div>
+
+      {/* Organization dropdown */}
+      <div className="relative">
+        <Building2 size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] z-10" />
+        <select
+          value={organization}
+          onChange={(e) => setOrganization(e.target.value)}
+          required
+          className={`${inputBase} appearance-none`}
+        >
+          <option value="">
+            {organizations.length === 0 ? "No colleges available" : "Select your college"}
+          </option>
+          {organizations.map((org) => (
+            <option key={org._id} value={org._id}>
+              {org.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="relative">
+        <Mail size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className={inputBase}
+        />
+      </div>
+
+      <div className="relative">
+        <Lock size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className={inputBase}
+        />
+      </div>
 
       {error && (
         <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg border border-red-100 animate-fade-in-up">

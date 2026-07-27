@@ -1,17 +1,18 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import dashBoard from '../pages/admin/dashBoard'
-import Users from '../pages/admin/Users'
-import colleges from '../pages/admin/colleges'
-import Reports from '../pages/admin/Reports'
+import { Route, Routes } from "react-router-dom";
+import DashBoard from "../pages/admin/DashBoard";
+import Users from "../pages/admin/Users";
+import Colleges from "../pages/admin/Colleges";
+import Reports from "../pages/admin/Reports";
 
-const AdminRoute = () => {
-  <Routes>
-    <Route path='dashboard' element={<dashBoard/>}/>
-    <Route path='users' element={<Users/>}/>
-    <Route path='colleges' element={<colleges/>}/>
-    <Route path='reports' element={<Reports/>}/>
-  </Routes>
-}
+const AdminRoutes = () => {
+  return (
+    <Routes>
+      <Route path="dashboard" element={<DashBoard />} />
+      <Route path="users" element={<Users />} />
+      <Route path="colleges" element={<Colleges />} />
+      <Route path="reports" element={<Reports />} />
+    </Routes>
+  );
+};
 
-export default AdminRoute
+export default AdminRoutes;
