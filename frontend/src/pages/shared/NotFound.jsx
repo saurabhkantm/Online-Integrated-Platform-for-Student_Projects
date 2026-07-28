@@ -27,7 +27,7 @@ const NotFound = () => {
           Back to home
         </Link>
         <Link
-          to="/browse"
+          to="/browse-project"
           className="px-6 py-3 rounded-lg border border-[#1B2340] text-[#1B2340] text-sm font-medium hover:bg-white transition"
         >
           Browse projects

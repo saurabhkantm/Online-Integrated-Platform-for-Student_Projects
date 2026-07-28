@@ -29,3 +29,18 @@ export const deleteProject = async (id) => {
   const res = await api.delete(`/api/projects/delete/${id}`);
   return res.data;
 };
+
+export const getAssignedProjects = async () => {
+  const res = await api.get("/api/faculty/projects");
+  return res.data.projects;
+};
+
+export const getProjectDetails = async (id) => {
+  const res = await api.get(`/api/faculty/projects/${id}`);
+  return res.data.project;
+};
+
+export const reviewProject = async (id, { status, feedback }) => {
+  const res = await api.patch(`/api/faculty/projects/${id}/review`, { status, feedback });
+  return res.data.project;
+};

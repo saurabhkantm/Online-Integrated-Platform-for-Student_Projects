@@ -18,7 +18,7 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center gap-6 text-sm text-[#F7F5F0]">
-        <Link to="/browse" className="hover:text-[#F0A868] transition">
+        <Link to="/browse-project" className="hover:text-[#F0A868] transition">
           Browse Projects
         </Link>
 
