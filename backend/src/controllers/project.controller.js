@@ -3,7 +3,17 @@ import userModel from "../model/user.model.js";
 import projectActivityModel from "../model/projectActivity.model.js";
 
 export default async function createProject(req, res) {
-  const { title, description, category, techStack, assignedFaculty } = req.body;
+  const {
+    title,
+    description,
+    category,
+    techStack,
+    assignedFaculty,
+    teamMembers,
+    githubLink,
+    liveLink,
+    documentation,
+  } = req.body;
 
   if (
     !title ||
@@ -70,6 +80,10 @@ export default async function createProject(req, res) {
       organization: req.user.organization,
       assignedFaculty,
       createdBy: req.user._id,
+      teamMembers: teamMembers || [],
+      githubLink: githubLink || null,
+      liveLink: liveLink || null,
+      documentation: documentation || null,
     });
 
     await projectActivityModel.create({
