@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
-import { getMyProjects } from "../../services/projectService";
+import { getMyProjects, deleteProject } from "../../services/ProjectService.js";
 import { FaGithub } from "react-icons/fa";
-import {  ExternalLink, FileText, Plus } from "lucide-react";
+import { ExternalLink, FileText, Plus, Pencil, Trash2 } from "lucide-react";
 
 const statusStyles = {
   draft: { label: "Draft", bg: "bg-[#E2E4EA]", text: "text-[#4A5568]" },
@@ -16,20 +16,37 @@ const statusStyles = {
 const MyProjects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
+  const navigate = useNavigate();
+
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const data = await getMyProjects();
+      setProjects(data || []);
+    } catch (err) {
+      console.error("Failed to load projects", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await getMyProjects();
-        setProjects(data || []);
-      } catch (err) {
-        console.error("Failed to load projects", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProjects();
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this draft project? This can't be undone.")) return;
+    setDeletingId(id);
+    try {
+      await deleteProject(id);
+      setProjects((prev) => prev.filter((p) => p._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to delete project.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F7F5F0]">
@@ -71,6 +88,8 @@ const MyProjects = () => {
             <div className="flex flex-col gap-4">
               {projects.map((project) => {
                 const status = statusStyles[project.status] || statusStyles.draft;
+                const isDraft = project.status === "draft";
+
                 return (
                   <div
                     key={project._id}
@@ -83,9 +102,32 @@ const MyProjects = () => {
                           {project.description}
                         </p>
                       </div>
-                      <span className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${status.bg} ${status.text}`}>
-                        {status.label}
-                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${status.bg} ${status.text}`}>
+                          {status.label}
+                        </span>
+
+                        {isDraft && (
+                          <>
+                            <button
+                              onClick={() => navigate(`/student/projects/${project._id}/edit`)}
+                              className="p-2 rounded-lg border border-[#E2E4EA] text-[#4A5568] hover:border-[#1B2340] hover:text-[#1B2340] transition"
+                              title="Edit draft"
+                            >
+                              <Pencil size={15} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(project._id)}
+                              disabled={deletingId === project._id}
+                              className="p-2 rounded-lg border border-[#E2E4EA] text-red-500 hover:border-red-400 hover:bg-red-50 disabled:opacity-50 transition"
+                              title="Delete draft"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2 mt-4">

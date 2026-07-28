@@ -2,7 +2,8 @@ import api from "./api";
 
 export const getMyProjects = async()=>{
     const res = await api.get("/api/projects/my-projects");
-    return res.data.project;
+    console.log(res);
+    return res.data.projects;
 }
 
 export const createProject = async(projectData)=>{
@@ -22,6 +23,7 @@ export const updateProject = async (id, projectData) => {
 
 export const submitProject = async (id) => {
   const res = await api.patch(`/api/projects/${id}/submit`);
+  console.log(res);
   return res.data.project;
 };
 

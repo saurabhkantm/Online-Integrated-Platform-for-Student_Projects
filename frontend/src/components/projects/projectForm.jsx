@@ -117,7 +117,7 @@ const ProjectForm = () => {
     "w-full px-4 py-3 rounded-lg border border-[#E2E4EA] bg-white text-sm text-[#1B2340] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1B2340]/15 focus:border-[#1B2340] transition-all duration-200";
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full max-w-4xl mx-auto">
       {/* Title */}
       <div>
         <label className="text-xs text-[#6B7280] mb-1 block">Project title</label>
