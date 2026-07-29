@@ -43,7 +43,7 @@ export const getProjectDetails = async (id) => {
 };
 
 export const reviewProject = async (id, { status, feedback }) => {
-  const res = await api.patch(`/api/faculty/projects/${id}/review`, { status, feedback });
+  const res = await api.patch(`/api/faculty/project/${id}/review`, { status, feedback });
   return res.data.project;
 };
 
