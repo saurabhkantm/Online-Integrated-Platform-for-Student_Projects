@@ -46,3 +46,14 @@ export const reviewProject = async (id, { status, feedback }) => {
   const res = await api.patch(`/api/faculty/projects/${id}/review`, { status, feedback });
   return res.data.project;
 };
+
+export const addProjectUpdate = async (id, message) => {
+  const res = await api.post(`/api/studentprojects/${id}/activities/updates`, { message });
+  console.log("updatedd",res)
+  return res.data;
+};
+
+export const getProjectTimeline = async (id) => {
+  const res = await api.get(`/api/studentprojects/${id}/activities/timeline`);
+  return res.data.timeline;
+};
