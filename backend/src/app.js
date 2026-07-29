@@ -5,6 +5,7 @@ import authRouter from "./routes/auth.route.js";
 import organizationRouter from "./routes/organization.route.js";
 import projectRouter from "./routes/project.route.js";
 import projectActivityRouter from "./routes/projectActivity.route.js";
+import facultyRouter from "./routes/faculty.route.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/organizations", organizationRouter);
 app.use("/api/projects", projectRouter);
-app.use("/api/studentprojects",projectActivityRouter)
+app.use("/api/studentprojects",projectActivityRouter);
+app.use("/api/faculty",facultyRouter);
 
 export default app;
