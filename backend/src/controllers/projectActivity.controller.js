@@ -17,6 +17,7 @@ export async function addProjectUpdate(req, res) {
       createdBy: req.user._id,
     });
 
+   
     if (!project) {
       return res.status(404).json({
         success: false,

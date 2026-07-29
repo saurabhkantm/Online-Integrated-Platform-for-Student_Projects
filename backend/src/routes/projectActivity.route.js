@@ -9,14 +9,14 @@ import authorize from "../middleware/authorize.middleware.js";
 const projectActivityRouter = express.Router();
 
 projectActivityRouter.post(
-  "/:id/activities",
+  "/:id/activities/updates",
   authMiddleware,
   authorize("student"),
   addProjectUpdate,
 );
 
 projectActivityRouter.get(
-  "/:id/activities",
+  "/:id/activities/timeline",
   authMiddleware,
   authorize("student"),
   getProjectTimeline,
