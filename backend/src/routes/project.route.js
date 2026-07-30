@@ -2,6 +2,7 @@ import express from "express";
 import createProject, {
   deleteProject,
   getAllProjects,
+  getPublicProjects,
   getSingleProject,
   submitProject,
   updateProject,
@@ -13,6 +14,7 @@ console.log("Project routes loaded");
 
 const projectRouter = express.Router();
 
+projectRouter.get("/publicProjects",getPublicProjects);
 projectRouter.post("/", authMiddleware, authorize("student"), createProject);
 projectRouter.get(
   "/my-projects",

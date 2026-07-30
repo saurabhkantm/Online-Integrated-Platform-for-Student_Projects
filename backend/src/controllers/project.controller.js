@@ -300,3 +300,38 @@ export async function submitProject(req, res) {
     });
   }
 }
+
+export async function getPublicProjects(req, res) {
+  try {
+    const { search, category, organization, tech } = req.query;
+
+    const filter = { status: "approved" };
+
+    if (category) filter.category = category;
+    if (organization) filter.organization = organization;
+    if (tech) filter.techStack = { $in: [tech] };
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const projects = await projectModel
+      .find(filter)
+      .populate("createdBy", "name")
+      .populate("organization", "name code")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      projects,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+}
