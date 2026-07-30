@@ -57,3 +57,9 @@ export const getProjectTimeline = async (id) => {
   const res = await api.get(`/api/studentprojects/${id}/activities/timeline`);
   return res.data.timeline;
 };
+
+export const getPublicProjects = async(filters={})=>{
+  const params = new URLSearchParams(filters).toString();
+  const res = await api.get(`/api/projects/publicProjects?${params}`);
+  return res.data.projects
+};
