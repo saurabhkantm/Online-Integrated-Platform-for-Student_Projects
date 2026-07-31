@@ -63,6 +63,14 @@ const projectSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    reviewCount: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: [

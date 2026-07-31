@@ -2,6 +2,7 @@ import express from "express";
 import createProject, {
   deleteProject,
   getAllProjects,
+  getPublicProjectById,
   getPublicProjects,
   getSingleProject,
   submitProject,
@@ -46,4 +47,5 @@ projectRouter.delete(
   authorize("student"),
   deleteProject,
 );
+projectRouter.get("/public/:id",getPublicProjectById);
 export default projectRouter;
