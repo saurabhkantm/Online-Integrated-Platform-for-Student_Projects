@@ -62,7 +62,7 @@ const HomePage = () => {
             style={{ animationDelay: "0.4s" }}
           >
             <Link
-              to="/browse"
+              to="/browse-project"
               className="px-6 py-3 rounded-lg bg-[#1B2340] text-[#F7F5F0] text-sm font-medium hover:bg-[#232B4D] hover:scale-105 hover:shadow-lg transition-all duration-300"
             >
               Browse Projects

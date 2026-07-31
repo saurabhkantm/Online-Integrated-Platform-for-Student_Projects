@@ -35,7 +35,7 @@ const PopularCategories = () => {
         })}
 
         <Link
-          to="/browse"
+          to="/browse-project"
           className="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-[#1B2340] hover:bg-[#232B4D] transition-all duration-300 text-center"
         >
           <span className="text-sm font-medium text-[#F7F5F0]">View All</span>
