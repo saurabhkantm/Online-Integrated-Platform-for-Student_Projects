@@ -63,3 +63,8 @@ export const getPublicProjects = async(filters={})=>{
   const res = await api.get(`/api/projects/publicProjects?${params}`);
   return res.data.projects
 };
+
+export const getPublicProjectById = async (id) => {
+  const res = await api.get(`/api/projects/public/${id}`);
+  return res.data.project;
+};
