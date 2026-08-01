@@ -71,6 +71,17 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    plagiarismScore: {
+      type: Number,
+      default: 0,
+    },
+    plagiarismFlagged: {
+      type: Boolean,
+      default: false,
+    }, plagiarismReason: {
+      type: String,
+      default: null,
+    },
     status: {
       type: String,
       enum: [

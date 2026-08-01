@@ -1,6 +1,7 @@
 import projectModel from "../model/project.model.js";
 import userModel from "../model/user.model.js";
 import projectActivityModel from "../model/projectActivity.model.js";
+import { comparePlagarism } from "../utils/plagarismCheck.js";
 
 export default async function createProject(req, res) {
   const {
@@ -273,6 +274,26 @@ export async function submitProject(req, res) {
         success: false,
         message: "Please add a GitHub repository before submitting.",
       });
+    }
+
+    const othersProjects = await projectModel.find({
+      _id: { $ne: project._id },
+      status: { $in: ["pending_review", "approved"] },
+    }).limit(10);
+
+    let highestMatch = { score: 0, reason: "" };
+
+    for (const otherProject of othersProjects) {
+      const result = await comparePlagarism(project.description, otherProject.description);
+      if (result.score > highestMatch.score) {
+        highestMatch = result;
+      }
+    }
+    console.log("Highest plagiarism match:", highestMatch);
+    if (highestMatch.score > 70) {
+      project.plagiarismFlagged = true;
+      project.plagiarismScore = highestMatch.score;
+      project.plagiarismReason = highestMatch.reason;
     }
 
     project.status = "pending_review";
