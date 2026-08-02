@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import LoginForm from "../../components/auth/loginform";
+import LoginForm from "../../components/auth/loginForm.jsx";
 import campusHero from "../../assets/campus-hero.svg";
 
 const Login = () => {

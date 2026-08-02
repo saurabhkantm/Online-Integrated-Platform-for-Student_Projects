@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Plus, Link as LinkIcon, FileText } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
-import { createProject, submitProject } from "../../services/projectService";
+import { createProject, submitProject } from "../../services/ProjectService";
 import { getUsersByRole } from "../../services/userService";
 
 const categories = [

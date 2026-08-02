@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Navbar from "../../components/common/Navbar";
-import { getMyProjects } from "../../services/projectService";
+import { getMyProjects } from "../../services/ProjectService.js";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
