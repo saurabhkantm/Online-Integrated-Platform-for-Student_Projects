@@ -74,7 +74,39 @@ const ProjectForm = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
+  const buildPayload = () => ({
+    title,
+    description,
+    category,
+    techStack,
+    assignedFaculty,
+    teamMembers,
+    githubLink,
+    liveLink,
+    documentation,
+  });
+
+  const handleSaveDraft = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (techStack.length === 0) {
+      setError("Add at least one tech stack tag.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await createProject(buildPayload());
+      navigate("/student/my-project");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to save draft. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmitForReview = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -83,29 +115,15 @@ const ProjectForm = () => {
       return;
     }
     if (!githubLink.trim()) {
-      setError("A GitHub link is required before submitting.");
+      setError("A GitHub link is required before submitting for review.");
       return;
     }
 
     setSubmitting(true);
     try {
-      // Step 1: create as draft
-      const project = await createProject({
-        title,
-        description,
-        category,
-        techStack,
-        assignedFaculty,
-        teamMembers,
-        githubLink,
-        liveLink,
-        documentation,
-      });
-
-      // Step 2: immediately submit for review
+      const project = await createProject(buildPayload());
       await submitProject(project._id);
-
-      navigate("/student/my-projects");
+      navigate("/student/my-project");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to submit project. Try again.");
     } finally {
@@ -117,7 +135,7 @@ const ProjectForm = () => {
     "w-full px-4 py-3 rounded-lg border border-[#E2E4EA] bg-white text-sm text-[#1B2340] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1B2340]/15 focus:border-[#1B2340] transition-all duration-200";
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full ">
+    <form className="flex flex-col gap-5 w-full ">
       {/* Title */}
       <div>
         <label className="text-xs text-[#6B7280] mb-1 block">Project title</label>
@@ -251,7 +269,6 @@ const ProjectForm = () => {
           type="url"
           value={githubLink}
           onChange={(e) => setGithubLink(e.target.value)}
-          required
           placeholder="GitHub repository link"
           className={`${inputBase} pl-11`}
         />
@@ -285,13 +302,25 @@ const ProjectForm = () => {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-2 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-semibold text-sm hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-      >
-        {submitting ? "Submitting..." : "Submit project for review"}
-      </button>
+      <div className="flex gap-3 mt-2 max-w-3xl text-center">
+        <button
+          type="button"
+          onClick={handleSaveDraft}
+          disabled={submitting}
+          className="flex-1 py-3 rounded-lg border border-[#1B2340] text-[#1B2340] font-semibold text-sm hover:bg-white disabled:opacity-50 transition-all duration-200"
+        >
+          {submitting ? "Saving..." : "Save as draft"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleSubmitForReview}
+          disabled={submitting}
+          className="flex-1 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-semibold text-sm hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        >
+          {submitting ? "Submitting..." : "Submit for review"}
+        </button>
+      </div>
     </form>
   );
 };

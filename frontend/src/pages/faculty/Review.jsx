@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../components/common/Navbar";
 import { getAssignedProjects, reviewProject } from "../../services/ProjectService.js";
 import { FaGithub } from "react-icons/fa";
-import { ExternalLink, FileText, ChevronDown, Check, X, AlertCircle } from "lucide-react";
+import { ExternalLink, FileText, ChevronDown, Check, X, AlertCircle, ShieldAlert } from "lucide-react";
 
 const statusStyles = {
   pending_review: { label: "Pending Review", bg: "bg-[#F0A868]/20", text: "text-[#B9762F]" },
@@ -85,7 +85,8 @@ const ReviewProjects = () => {
                 return (
                   <div
                     key={project._id}
-                    className="rounded-xl bg-white border border-[#E2E4EA] overflow-hidden"
+                    className={`rounded-xl bg-white border overflow-hidden transition ${project.plagiarismFlagged ? "border-red-200" : "border-[#E2E4EA]"
+                      }`}
                   >
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : project._id)}
@@ -98,6 +99,19 @@ const ReviewProjects = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
+                        {project.plagiarismAverageScore
+                          != null && (
+                            <span
+                              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${project.plagiarismFlagged
+                                  ? "bg-red-50 text-red-600"
+                                  : "bg-green-50 text-green-700"
+                                }`}
+                            >
+                              <ShieldAlert size={12} />
+                              {project.plagiarismAverageScore
+                              }% match
+                            </span>
+                          )}
                         <span className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${status.bg} ${status.text}`}>
                           {status.label}
                         </span>
@@ -149,6 +163,39 @@ const ReviewProjects = () => {
                             </a>
                           )}
                         </div>
+
+                        {/* Plagiarism detail panel */}
+                        {project.plagiarismScore != null && (
+                          <div
+                            className={`p-4 rounded-lg border mb-5 ${project.plagiarismFlagged
+                                ? "bg-red-50 border-red-100"
+                                : "bg-green-50 border-green-100"
+                              }`}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <ShieldAlert
+                                size={15}
+                                className={project.plagiarismFlagged ? "text-red-600" : "text-green-700"}
+                              />
+                              <p className={`text-sm font-semibold ${project.plagiarismFlagged ? "text-red-700" : "text-green-800"
+                                }`}>
+                                {project.plagiarismFlagged
+                                  ? `Flagged — ${project.plagiarismAverageScore
+                                  }% similarity to existing work`
+                                  : `Looks original — ${project.plagiarismAverageScore
+                                  }% highest similarity found`}
+                              </p>
+                            </div>
+                            {project.plagiarismReason && (
+                              <p className="text-sm text-[#4A5568] ml-6">{project.plagiarismReason}</p>
+                            )}
+                            {project.plagiarismAverageScore != null && (
+                              <p className="text-xs text-[#6B7280] ml-6 mt-1">
+                                Average similarity across all comparisons: {project.plagiarismAverageScore}%
+                              </p>
+                            )}
+                          </div>
+                        )}
 
                         {isPending ? (
                           <>

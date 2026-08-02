@@ -4,7 +4,7 @@ import Navbar from "../../components/common/Navbar";
 import { getMyProjects, deleteProject } from "../../services/ProjectService.js";
 import ProjectTimeline from "../../components/projects/ProjectTimeline";
 import { FaGithub } from "react-icons/fa";
-import { ExternalLink, FileText, Plus, Pencil, Trash2, ChevronDown } from "lucide-react";
+import { ExternalLink, FileText, Plus, Pencil, Trash2, ChevronDown, ShieldAlert } from "lucide-react";
 
 const statusStyles = {
   draft: { label: "Draft", bg: "bg-[#E2E4EA]", text: "text-[#4A5568]" },
@@ -19,6 +19,7 @@ const MyProjects = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [activeTab, setActiveTab] = useState("submitted"); 
   const navigate = useNavigate();
 
   const fetchProjects = async () => {
@@ -50,6 +51,10 @@ const MyProjects = () => {
     }
   };
 
+  const drafts = projects.filter((p) => p.status === "draft");
+  const submitted = projects.filter((p) => p.status !== "draft");
+  const visibleProjects = activeTab === "drafts" ? drafts : submitted;
+
   return (
     <div className="min-h-screen bg-[#F7F5F0]">
       <Navbar />
@@ -72,23 +77,51 @@ const MyProjects = () => {
           </Link>
         </div>
 
-        <div className="mt-8">
+        {/* Tabs */}
+        <div className="flex gap-2 mt-8 mb-6 border-b border-[#E2E4EA]">
+          <button
+            onClick={() => setActiveTab("submitted")}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition cursor-pointer ${
+              activeTab === "submitted"
+                ? "border-[#1B2340] text-[#1B2340]"
+                : "border-transparent text-[#9CA3AF] hover:text-[#4A5568]"
+            }`}
+          >
+            Submitted ({submitted.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("drafts")}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition cursor-pointer ${
+              activeTab === "drafts"
+                ? "border-[#1B2340] text-[#1B2340]"
+                : "border-transparent text-[#9CA3AF] hover:text-[#4A5568]"
+            }`}
+          >
+            Drafts ({drafts.length})
+          </button>
+        </div>
+
+        <div>
           {loading ? (
             <p className="text-sm text-[#6B7280]">Loading your projects...</p>
-          ) : projects.length === 0 ? (
+          ) : visibleProjects.length === 0 ? (
             <div className="p-10 text-center rounded-xl bg-white border border-[#E2E4EA]">
               <FileText size={28} className="mx-auto text-[#9CA3AF] mb-3" />
-              <p className="text-sm text-[#6B7280] mb-4">You haven't submitted any projects yet.</p>
+              <p className="text-sm text-[#6B7280] mb-4">
+                {activeTab === "drafts"
+                  ? "No drafts saved."
+                  : "You haven't submitted any projects yet."}
+              </p>
               <Link
                 to="/student/submit"
                 className="inline-block px-5 py-2.5 rounded-lg bg-[#F0A868] text-[#1B2340] text-sm font-semibold hover:bg-[#EC9B52] transition"
               >
-                Submit your first project
+                {activeTab === "drafts" ? "Create a draft" : "Submit your first project"}
               </Link>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {projects.map((project) => {
+              {visibleProjects.map((project) => {
                 const status = statusStyles[project.status] || statusStyles.draft;
                 const isDraft = project.status === "draft";
                 const isExpanded = expandedId === project._id;
@@ -96,7 +129,9 @@ const MyProjects = () => {
                 return (
                   <div
                     key={project._id}
-                    className="rounded-xl bg-white border border-[#E2E4EA] hover:border-[#1B2340]/30 transition overflow-hidden"
+                    className={`rounded-xl bg-white border overflow-hidden transition ${
+                      project.plagiarismFlagged ? "border-red-200" : "border-[#E2E4EA]"
+                    } hover:border-[#1B2340]/30`}
                   >
                     <div className="p-6">
                       <div className="flex items-start justify-between flex-wrap gap-3">
@@ -108,6 +143,20 @@ const MyProjects = () => {
                         </div>
 
                         <div className="flex items-center gap-2">
+                          {project.plagiarismScore != null && (
+                            <span
+                              className={`flex items-center cursor-pointer gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                                project.plagiarismFlagged
+                                  ? "bg-red-50 text-red-600"
+                                  : "bg-green-50 text-green-700"
+                              }`}
+                              title={project.plagiarismReason || "No significant similarity found"}
+                            >
+                              <ShieldAlert size={12} />
+                              {project.plagiarismAverageScore}% match
+                            </span>
+                          )}
+
                           <span className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${status.bg} ${status.text}`}>
                             {status.label}
                           </span>

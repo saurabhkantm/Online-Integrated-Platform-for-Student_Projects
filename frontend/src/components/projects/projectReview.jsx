@@ -65,7 +65,6 @@ const ProjectReviews = ({ projectId, isOwner }) => {
         )}
       </div>
 
-      {/* Review form — only if logged in and not the project owner */}
       {user && !isOwner && (
         <form onSubmit={handleSubmit} className="p-5 rounded-xl bg-white border border-[#E2E4EA] mb-6">
           <p className="text-sm font-medium text-[#1B2340] mb-2">Leave a rating</p>

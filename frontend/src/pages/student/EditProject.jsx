@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
-import { getSingleProject, updateProject } from "../../services/ProjectService.js";
+import { getSingleProject, updateProject, submitProject } from "../../services/ProjectService.js";
 import { X, Plus } from "lucide-react";
 
 const categories = [
@@ -27,6 +27,7 @@ const EditProject = () => {
   const [category, setCategory] = useState("");
   const [techStack, setTechStack] = useState([]);
   const [techInput, setTechInput] = useState("");
+  const [githubLink, setGithubLink] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,6 +41,7 @@ const EditProject = () => {
         setDescription(project.description || "");
         setCategory(project.category || "");
         setTechStack(project.techStack || []);
+        setGithubLink(project.githubLink || "");
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load project.");
       } finally {
@@ -62,7 +64,7 @@ const EditProject = () => {
     setTechStack(techStack.filter((t) => t !== tech));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSaveChanges = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -77,6 +79,31 @@ const EditProject = () => {
       navigate("/student/my-project");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update project.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmitForReview = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (techStack.length === 0) {
+      setError("Add at least one tech stack tag.");
+      return;
+    }
+    if (!githubLink.trim()) {
+      setError("A GitHub link is required before submitting for review. Add it, then submit again.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await updateProject(id, { title, description, category, techStack });
+      await submitProject(id);
+      navigate("/student/my-project");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to submit project. Try again.");
     } finally {
       setSubmitting(false);
     }
@@ -108,7 +135,7 @@ const EditProject = () => {
           Update your project
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form className="flex flex-col gap-5">
           <div>
             <label className="text-xs text-[#6B7280] mb-1 block">Project title</label>
             <input
@@ -188,19 +215,42 @@ const EditProject = () => {
             )}
           </div>
 
+          <div>
+            <label className="text-xs text-[#6B7280] mb-1 block">GitHub link</label>
+            <input
+              type="url"
+              value={githubLink}
+              onChange={(e) => setGithubLink(e.target.value)}
+              placeholder="Required only to submit for review"
+              className={inputBase}
+            />
+          </div>
+
           {error && (
             <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg border border-red-100">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-2 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-semibold text-sm hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-          >
-            {submitting ? "Saving..." : "Save changes"}
-          </button>
+          <div className="flex gap-3 mt-2 max-w-3xl ">
+            <button
+              type="button"
+              onClick={handleSaveChanges}
+              disabled={submitting}
+              className="flex-1 py-3 rounded-lg border border-[#1B2340] text-[#1B2340] font-semibold text-sm hover:bg-white disabled:opacity-50 transition-all duration-200"
+            >
+              {submitting ? "Saving..." : "Save changes"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSubmitForReview}
+              disabled={submitting}
+              className="flex-1 py-3 rounded-lg bg-[#F0A868] text-[#1B2340] font-semibold text-sm hover:bg-[#EC9B52] hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              {submitting ? "Submitting..." : "Submit for review"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
