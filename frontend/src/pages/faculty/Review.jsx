@@ -6,9 +6,9 @@ import { ExternalLink, FileText, ChevronDown, Check, X, AlertCircle, ShieldAlert
 
 const statusStyles = {
   pending_review: { label: "Pending Review", bg: "bg-[#F0A868]/20", text: "text-[#B9762F]" },
-  approved: { label: "Approved", bg: "bg-green-100", text: "text-green-700" },
-  needs_changes: { label: "Needs Changes", bg: "bg-blue-100", text: "text-blue-700" },
-  rejected: { label: "Rejected", bg: "bg-red-100", text: "text-red-700" },
+  approved: { label: "Approved", bg: "bg-green-50/20", text: "text-green-700" },
+  needs_changes: { label: "Needs Changes", bg: "bg-amber-50", text: "text-amber-700" },
+  rejected: { label: "Rejected", bg: "bg-red-50", text: "text-red-600" },
 };
 
 const ReviewProjects = () => {
@@ -103,8 +103,8 @@ const ReviewProjects = () => {
                           != null && (
                             <span
                               className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${project.plagiarismFlagged
-                                  ? "bg-red-50 text-red-600"
-                                  : "bg-green-50 text-green-700"
+                                ? "bg-red-50 text-red-600"
+                                : "bg-green-50 text-green-700"
                                 }`}
                             >
                               <ShieldAlert size={12} />
@@ -168,8 +168,8 @@ const ReviewProjects = () => {
                         {project.plagiarismScore != null && (
                           <div
                             className={`p-4 rounded-lg border mb-5 ${project.plagiarismFlagged
-                                ? "bg-red-50 border-red-100"
-                                : "bg-green-50 border-green-100"
+                              ? "bg-red-50 border-red-100"
+                              : "bg-green-50 border-green-100"
                               }`}
                           >
                             <div className="flex items-center gap-2 mb-1">
@@ -225,7 +225,7 @@ const ReviewProjects = () => {
                               <button
                                 onClick={() => handleReview(project._id, "needs_changes")}
                                 disabled={submittingAction !== null}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 disabled:opacity-50 transition"
                               >
                                 <AlertCircle size={16} />
                                 {submittingAction === "needs_changes" ? "Sending..." : "Request Changes"}
