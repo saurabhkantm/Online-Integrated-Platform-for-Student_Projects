@@ -75,6 +75,10 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    plagiarismAverageScore:{
+      type: Number,
+      default: 0,
+    },
     plagiarismFlagged: {
       type: Boolean,
       default: false,

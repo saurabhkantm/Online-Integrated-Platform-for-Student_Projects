@@ -282,18 +282,34 @@ export async function submitProject(req, res) {
     }).limit(10);
 
     let highestMatch = { score: 0, reason: "" };
+    let totalScore = 0;
+    let comparisonCount = 0;
 
     for (const otherProject of othersProjects) {
+      console.log(`Comparing "${project.description}" vs "${otherProject.description}"`);
       const result = await comparePlagarism(project.description, otherProject.description);
+      console.log(`Score: ${result.score}`);
+
+      totalScore += result.score;
+      comparisonCount++;
+
       if (result.score > highestMatch.score) {
-        highestMatch = result;
+        highestMatch = { ...result, matchedTitle: otherProject.title };
       }
     }
+
+    const averageScore = comparisonCount > 0 ? Math.round(totalScore / comparisonCount) : 0;
+
     console.log("Highest plagiarism match:", highestMatch);
-    if (highestMatch.score > 70) {
+    console.log("Average plagiarism score:", averageScore);
+
+    if (highestMatch.score >= 70) {
       project.plagiarismFlagged = true;
       project.plagiarismScore = highestMatch.score;
+      project.plagiarismAverageScore = averageScore;
       project.plagiarismReason = highestMatch.reason;
+    } else {
+      project.plagiarismAverageScore = averageScore;
     }
 
     project.status = "pending_review";
