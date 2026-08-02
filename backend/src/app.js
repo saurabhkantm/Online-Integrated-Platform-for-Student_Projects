@@ -11,7 +11,7 @@ import reviewRouter from "./routes/reviews.route.js";
 const app = express();
 
 app.use(cors({
-  origin: "https://eduarchive-wheat.vercel.app/",
+  origin: "https://eduarchive-wheat.vercel.app",
   credentials: true,
 }));
 
