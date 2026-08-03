@@ -13,6 +13,7 @@ import Register from '../pages/auth/Register'
 import HomePage from '../pages/shared/Homepage'
 import AboutUs from '../pages/shared/Aboutus'
 import LoginForm from '../pages/auth/Login'
+import LeaderboardPage from '../pages/shared/LeaderBoard'
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
       {/* public browse routes */}
       <Route path="/" element={<HomePage/>} />
       <Route path="/about" element={<AboutUs/>} />
+      <Route path="/leaderboard" element={<LeaderboardPage />} />
       <Route path="/browse-project" element={<BrowseProjects />} />
       <Route path="/projects/:id" element={<ProjectDetailsPage />} />
       <Route path="/peer-learning" element={<PeerLearning />} />

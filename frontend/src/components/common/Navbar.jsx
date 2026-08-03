@@ -18,10 +18,16 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center gap-6 text-sm text-[#F7F5F0]">
+        <Link to="/" className="hover:text-[#F0A868] transition">
+          Home
+        </Link>
         <Link to="/browse-project" className="hover:text-[#F0A868] transition">
           Browse Projects
         </Link>
-
+        <Link to="/leaderboard" className="hover:text-[#F0A868] transition">
+          Leaderboard
+          </Link>
+        
         {user ? (
           <>
             <Link

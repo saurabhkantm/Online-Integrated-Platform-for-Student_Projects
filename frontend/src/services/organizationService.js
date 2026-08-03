@@ -14,3 +14,9 @@ export const setOrganization = async(orgdata)=>{
     console.log(res);
     return res.data
 }
+
+export const getLeaderboard = async(limit=10)=>{
+    const res = await api.get(`/api/studentprojects/leaderboard?limit=${limit}`);
+    console.log("Leaderboard data fetched:", res.data);
+    return res.data;
+}
