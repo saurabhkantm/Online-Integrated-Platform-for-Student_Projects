@@ -79,3 +79,26 @@ export async function getProjectTimeline(req, res) {
     });
   }
 }
+export async function getLeaderboard(req, res) {
+  try{
+    const limit = parseInt(req.query.limit) || 10;
+    const topProjects = await projectModel.find({status: "APPROVED",reviewCount: { $gt: 0 } })
+    .sort({ averageRating: -1 })
+    .limit(limit)
+    .populate("createdBy", "name email")
+    .select("title description averageRating reviewCount createdBy");
+
+
+    return res.status(200).json({
+      success:true,
+      topProjects
+    })
+
+  }catch(e){
+    console.log(e);
+    return res.status(500).json({
+      success:false,
+      message:"Server Error"
+    })
+  }
+}

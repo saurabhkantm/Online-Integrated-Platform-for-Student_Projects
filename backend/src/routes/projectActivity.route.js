@@ -2,6 +2,7 @@ import express from "express";
 import {
   addProjectUpdate,
   getProjectTimeline,
+  getLeaderboard
 } from "../controllers/projectActivity.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import authorize from "../middleware/authorize.middleware.js";
@@ -14,6 +15,9 @@ projectActivityRouter.post(
   authorize("student"),
   addProjectUpdate,
 );
+
+projectActivityRouter.get("/leaderboard",getLeaderboard);
+ 
 
 projectActivityRouter.get(
   "/:id/activities/timeline",
