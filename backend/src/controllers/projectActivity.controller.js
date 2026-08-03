@@ -82,7 +82,7 @@ export async function getProjectTimeline(req, res) {
 export async function getLeaderboard(req, res) {
   try{
     const limit = parseInt(req.query.limit) || 10;
-    const topProjects = await projectModel.find({status: "APPROVED",reviewCount: { $gt: 0 } })
+    const topProjects = await projectModel.find({status: "approved",reviewCount: { $gt: 0 } })
     .sort({ averageRating: -1 })
     .limit(limit)
     .populate("createdBy", "name email")
