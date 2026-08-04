@@ -12,52 +12,72 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex mb-20 items-center justify-between px-8 md:px-14 py-4 fixed top-0 left-0 rounded-4xl right-0 bg-[#02081c]/90 m-6 backdrop-blur-sm border-b border-[#2A335A] z-[1000]">
-      <Link to="/" className="text-xl tracking-[0.2em] uppercase text-[#F7F5F0] font-semibold">
-        EduArchive
+<nav className="fixed top-4 left-4 right-4 z-50 flex items-center justify-between rounded-3xl border border-[#2A335A] bg-[#02081c]/90 backdrop-blur-md px-6 md:px-10 py-3 shadow-lg">
+   <Link to="/" className="flex items-center shrink-0">
+    <img
+      src="/logo.png"
+      alt="Logo"
+      className="h-20 md:h-20 w-auto object-contain"
+    />
+  </Link>
+
+  {/* Navigation */}
+  <div className="flex items-center gap-5 md:gap-8 text-sm font-medium text-[#F7F5F0]">
+    <Link
+      to="/"
+      className="transition-colors duration-300 hover:text-[#F0A868]"
+    >
+      Home
+    </Link>
+
+    <Link
+      to="/browse-project"
+      className="transition-colors duration-300 hover:text-[#F0A868]"
+    >
+      Browse Projects
+    </Link>
+
+    <Link
+      to="/leaderboard"
+      className="transition-colors duration-300 hover:text-[#F0A868]"
+    >
+      Leaderboard
+    </Link>
+
+    {user ? (
+      <>
+        <Link
+          to={`/${user.role}/dashboard`}
+          className="flex items-center gap-2 transition-colors duration-300 hover:text-[#F0A868]"
+        >
+          <LayoutDashboard size={18} />
+          Dashboard
+        </Link>
+
+        <span className="hidden lg:block text-xs text-[#9CA3AF] whitespace-nowrap">
+          {user.name} ·{" "}
+          <span className="capitalize">{user.role}</span>
+        </span>
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 rounded-xl border border-[#F0A868] px-4 py-2 text-[#F0A868] transition-all duration-300 hover:bg-[#F0A868] hover:text-[#02081c]"
+        >
+          <LogOut size={16} />
+          Logout
+        </button>
+      </>
+    ) : (
+      <Link
+        to="/register"
+        className="rounded-xl border border-[#F0A868] px-4 py-2 text-[#F0A868] transition-all duration-300 hover:bg-[#F0A868] hover:text-[#02081c]"
+      >
+        Register
       </Link>
-
-      <div className="flex items-center gap-6 text-sm text-[#F7F5F0]">
-        <Link to="/" className="hover:text-[#F0A868] transition">
-          Home
-        </Link>
-        <Link to="/browse-project" className="hover:text-[#F0A868] transition">
-          Browse Projects
-        </Link>
-        <Link to="/leaderboard" className="hover:text-[#F0A868] transition">
-          Leaderboard
-          </Link>
-        
-        {user ? (
-          <>
-            <Link
-              to={`/${user.role}/dashboard`}
-              className="flex items-center gap-1.5 hover:text-[#F0A868] transition"
-            >
-              <LayoutDashboard size={16} />
-              Dashboard
-            </Link>
-
-            <span className="text-[#9CA3AF] text-xs hidden md:inline">
-              {user.name} · <span className="capitalize">{user.role}</span>
-            </span>
-
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#F0A868] text-[#F0A868] hover:bg-[#F0A868] hover:text-[#1B2340] transition"
-            >
-              <LogOut size={15} />
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link to="/register" className="hover:text-[#F0A868] transition">
-            Register
-          </Link>
-        )}
-      </div>
-    </nav>
-  );
+    )}
+  </div>
+</nav>
+  )
 };
 
 export default Navbar;
