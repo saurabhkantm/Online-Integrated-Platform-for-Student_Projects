@@ -80,25 +80,57 @@ export async function getProjectTimeline(req, res) {
   }
 }
 export async function getLeaderboard(req, res) {
-  try{
-    const limit = parseInt(req.query.limit) || 10;
-    const topProjects = await projectModel.find({status: "approved",reviewCount: { $gt: 0 } })
-    .sort({ averageRating: -1 })
-    .limit(limit)
-    .populate("createdBy", "name email")
-    .select("title description averageRating reviewCount createdBy");
+  try {
+    const { category, organization, limit = 25, page = 1 } = req.query;
 
+    const filter = { status: "approved", reviewCount: { $gt: 0 } };
+    if (category) filter.category = category;
+    if (organization) filter.organization = organization;
+
+    const skip = (page - 1) * limit;
+
+    const projects = await projectModel
+      .find(filter)
+      .populate("createdBy", "name")
+      .populate("organization", "name code")
+      .sort({ averageRating: -1, reviewCount: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await projectModel.countDocuments(filter);
+
+    const allApproved = await projectModel.find({ status: "approved" });
+    const avgRatingOverall =
+      allApproved.length > 0
+        ? allApproved.reduce((sum, p) => sum + (p.averageRating || 0), 0) / allApproved.length
+        : 0;
+
+    const categoryBreakdown = {};
+    allApproved.forEach((p) => {
+      categoryBreakdown[p.category] = (categoryBreakdown[p.category] || 0) + 1;
+    });
+
+    // NEW: count distinct students with at least one approved project
+    const distinctParticipants = await projectModel.distinct("createdBy", { status: "approved" });
 
     return res.status(200).json({
-      success:true,
-      topProjects
-    })
-
-  }catch(e){
-    console.log(e);
+      success: true,
+      projects,
+      total,
+      page: Number(page),
+      totalPages: Math.ceil(total / limit),
+      stats: {
+        totalRanked: total,
+        avgRatingOverall: Math.round(avgRatingOverall * 100) / 100,
+        totalParticipants: distinctParticipants.length,
+        categoryBreakdown,
+      },
+    });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({
-      success:false,
-      message:"Server Error"
-    })
+      success: false,
+      message: "Server Error",
+    });
   }
 }
