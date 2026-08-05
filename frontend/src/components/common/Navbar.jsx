@@ -12,12 +12,12 @@ const Navbar = () => {
   };
 
   return (
-<nav className="fixed top-4 left-4 right-4 z-50 flex items-center justify-between rounded-3xl border border-[#2A335A] bg-[#02081c]/90 backdrop-blur-md px-6 md:px-10 py-3 shadow-lg">
+<nav className="fixed top-4 left-4 right-4 z-50 flex items-center justify-between rounded-3xl border border-[#2A335A] bg-[#02081c]/90 backdrop-blur-md px-6 md:px-10 shadow-lg">
    <Link to="/" className="flex items-center shrink-0">
     <img
-      src="/logo.png"
+      src="/logo3.png"
       alt="Logo"
-      className="h-20 md:h-20 w-auto object-contain"
+      className="h-20 md:h-22 w-28 object-contain"
     />
   </Link>
 
