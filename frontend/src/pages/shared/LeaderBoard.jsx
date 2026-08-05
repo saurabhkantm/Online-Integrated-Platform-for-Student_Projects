@@ -63,7 +63,6 @@ import {
  * ============================================================================
  */
 
-const RANGE_TABS = ["All Time", "This Week", "This Month", "This Year"];
 
 const medal = (rank) => (rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null);
 
@@ -247,38 +246,7 @@ const LeaderboardPage = () => {
           </div>
         </div>
 
-        {/* Filter bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-8">
-          <div className="flex items-center gap-1 p-1 rounded-full bg-white border border-[#E2E4EA] w-fit">
-            {RANGE_TABS.map((t) => (
-              <button
-                key={t}
-                onClick={() => setRange(t)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  range === t ? "bg-[#1B2340] text-white" : "text-[#6B7280] hover:text-[#1B2340]"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {["All Categories", "All Colleges", "All Technologies"].map((label) => (
-              <button
-                key={label}
-                className="px-4 py-2 rounded-full bg-white border border-[#E2E4EA] text-xs text-[#374151] hover:border-[#1B2340]/20 transition-colors"
-              >
-                {label}
-              </button>
-            ))}
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-[#E2E4EA] text-xs text-[#374151] hover:border-[#1B2340]/20 transition-colors">
-              <SlidersHorizontal size={13} />
-              Filters
-            </button>
-          </div>
-        </div>
-
+        
         {loading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
