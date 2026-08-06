@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
-import { getLeaderboard } from "../../services/organizationService.js";
+import { getLeaderboard } from "../../services/OrganizationService.js";
 import {
   Star,
   Trophy,

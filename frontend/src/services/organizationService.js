@@ -15,9 +15,14 @@ export const setOrganization = async(orgdata)=>{
     return res.data
 }
 
-export const getLeaderboard = async (filters = {}) => {
-  const params = new URLSearchParams(filters).toString();
-  const res = await api.get(`/api/studentprojects/leaderboard?${params}`);
-  return res.data;
+export const getLeaderboard = async ({ page = 1, limit = 10, category, organization } = {}) => {
+  const params = new URLSearchParams();
+  params.set("page", page);
+  params.set("limit", limit);
+  if (category) params.set("category", category);
+  if (organization) params.set("organization", organization);
+
+  const res = await api.get(`/api/studentprojects/leaderboard?${params.toString()}`);
+  return res.data; 
 };
 
