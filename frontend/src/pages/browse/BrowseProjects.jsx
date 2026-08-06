@@ -76,24 +76,18 @@ const BrowseProjects = () => {
     setOrganization("");
   };
 
-  // --- Action handlers ---
-  // Each one stops the click from bubbling up to the card's onClick (which navigates).
-
-  
+    
   const handleShare = async (e, project) => {
     e.stopPropagation();
     const url = `${window.location.origin}/projects/${project._id}`;
 
     if (navigator.share) {
-      // Native share sheet on mobile / supported browsers
       try {
         await navigator.share({ title: project.title, url });
       } catch (err) {
-        // user cancelled the share sheet — ignore
-      }
+        console.error("Failed to share", err);}
     } else {
-      // Fallback: copy link to clipboard
-      try {
+        try {
         await navigator.clipboard.writeText(url);
         setCopiedId(project._id);
         setTimeout(() => setCopiedId(null), 1500);
