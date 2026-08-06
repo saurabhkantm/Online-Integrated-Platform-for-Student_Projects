@@ -5,7 +5,7 @@ import ProjectReviews from "../../components/projects/projectReview.jsx";
 import { getPublicProjectById } from "../../services/ProjectService.js";
 import { useAuth } from "../../hooks/useAuth";
 import { FaGithub } from "react-icons/fa";
-import { ExternalLink, FileText, Building2, Star, User, GraduationCap } from "lucide-react";
+import { ExternalLink, FileText, Building2, Star, User, GraduationCap, Eye } from "lucide-react";
 
 const ProjectDetailPage = () => {
   const { id } = useParams();
@@ -90,14 +90,22 @@ const ProjectDetailPage = () => {
               <span className="text-xs text-[#9CA3AF]">
                 ({project.reviewCount})
               </span>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
+              <Eye size={13} className="text-[#9CA3AF]" />
+              <span className="text-xs font-semibold text-[#1B2340]">
+                {project.viewCount || 0}
+              </span>
+              <span className="text-xs text-[#9CA3AF]">views</span>
+            </div>
             </div>
           ) : (
             <span className="text-xs text-[#9CA3AF] px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
               No reviews yet
             </span>
           )}
-        </div>
 
+        </div>
+        
         {/* Title */}
         <h1 className="font-serif text-4xl md:text-5xl leading-[1.1] text-[#1B2340] mb-10 max-w-3xl">
           {project.title}

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import { getPublicProjects } from "../../services/ProjectService.js";
 import { getOrganization } from "../../services/organizationService.js";
-import { Search, FileText } from "lucide-react";
+import { Search, FileText, Eye, Share2, Download, Check } from "lucide-react";
 import { Star } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 import { useDebounce } from "../../hooks/deBounce.js";
@@ -30,10 +30,11 @@ const BrowseProjects = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [organization, setOrganization] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
   const debouncedSearch = useDebounce(search, 400);
 
-
-  const {user} = useAuth();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchOrgs = async () => {
@@ -66,7 +67,6 @@ const BrowseProjects = () => {
     };
     fetchProjects();
   }, [debouncedSearch, category, organization]);
-  console.log("projects are:",projects);
 
   const hasActiveFilters = search || category || organization;
 
@@ -76,6 +76,34 @@ const BrowseProjects = () => {
     setOrganization("");
   };
 
+  // --- Action handlers ---
+  // Each one stops the click from bubbling up to the card's onClick (which navigates).
+
+  
+  const handleShare = async (e, project) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/projects/${project._id}`;
+
+    if (navigator.share) {
+      // Native share sheet on mobile / supported browsers
+      try {
+        await navigator.share({ title: project.title, url });
+      } catch (err) {
+        // user cancelled the share sheet — ignore
+      }
+    } else {
+      // Fallback: copy link to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopiedId(project._id);
+        setTimeout(() => setCopiedId(null), 1500);
+      } catch (err) {
+        console.error("Failed to copy link", err);
+      }
+    }
+  };
+
+  
   return (
     <div className="min-h-screen bg-[#F7F5F0]">
       <Navbar />
@@ -148,73 +176,109 @@ const BrowseProjects = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {projects.map((project) => (
-    <Link
-      key={project._id}
-      to={`/projects/${project._id}`}
-      className="group relative flex flex-col p-6 rounded-2xl bg-white border border-[#E2E4EA] hover:border-[#F0A868] hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
-    >
-      {/* Top accent bar */}
-      <div className="absolute top-0 left-6 right-6 h-[3px] rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {projects.map((project) => (
+              <div
+                key={project._id}
+                onClick={() => navigate(`/projects/${project._id}`)}
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") navigate(`/projects/${project._id}`);
+                }}
+                className="group relative flex flex-col p-6 rounded-2xl bg-white border border-[#E2E4EA] hover:border-[#F0A868] hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
+              >
+                {/* Top accent bar */}
+                <div className="absolute top-0 left-6 right-6 h-[3px] rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <p className="font-serif text-lg text-[#1B2340] leading-snug">
-          {project.title}
-        </p>
-        <span className="shrink-0 px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-medium">
-          Approved
-        </span>
-      </div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="font-serif text-lg text-[#1B2340] leading-snug">
+                    {project.title}
+                  </p>
+                  <span className="shrink-0 px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-medium">
+                    Approved
+                  </span>
+                </div>
 
-      {/* Rating row */}
-      <div className="flex items-center gap-1.5 mb-3">
-        {project.reviewCount > 0 ? (
-          <>
-            <Star size={13} className="fill-[#F0A868] text-[#F0A868]" />
-            <span className="text-xs font-semibold text-[#1B2340]">
-              {project.averageRating?.toFixed(1)}
-            </span>
-            <span className="text-xs text-[#9CA3AF]">
-              ({project.reviewCount} {project.reviewCount === 1 ? "review" : "reviews"})
-            </span>
-          </>
-        ) : (
-          <span className="text-xs text-[#9CA3AF]">No reviews yet</span>
-        )}
-      </div>
+                {/* Rating row */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  {project.reviewCount > 0 ? (
+                    <>
+                      <Star size={13} className="fill-[#F0A868] text-[#F0A868]" />
+                      <span className="text-xs font-semibold text-[#1B2340]">
+                        {project.averageRating?.toFixed(1)}
+                      </span>
+                      <span className="text-xs text-[#9CA3AF]">
+                        ({project.reviewCount} {project.reviewCount === 1 ? "review" : "reviews"})
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xs text-[#9CA3AF]">No reviews yet</span>
+                  )}
+                </div>
 
-      <p className="text-sm text-[#6B7280] leading-relaxed line-clamp-2 mb-4">
-        {project.description}
-      </p>
+                <p className="text-sm text-[#6B7280] leading-relaxed line-clamp-2 mb-4">
+                  {project.description}
+                </p>
 
-      <div className="flex flex-wrap gap-1.5 mb-5">
-        {project.techStack?.slice(0, 3).map((tech) => (
-          <span
-            key={tech}
-            className="px-2.5 py-1 rounded-full bg-[#1B2340]/5 text-[#1B2340] text-xs font-medium"
-          >
-            {tech}
-          </span>
-        ))}
-        {project.techStack?.length > 3 && (
-          <span className="px-2.5 py-1 rounded-full bg-[#1B2340]/5 text-[#6B7280] text-xs">
-            +{project.techStack.length - 3}
-          </span>
-        )}
-      </div>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {project.techStack?.slice(0, 3).map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2.5 py-1 rounded-full bg-[#1B2340]/5 text-[#1B2340] text-xs font-medium"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                  {project.techStack?.length > 3 && (
+                    <span className="px-2.5 py-1 rounded-full bg-[#1B2340]/5 text-[#6B7280] text-xs">
+                      +{project.techStack.length - 3}
+                    </span>
+                  )}
+                </div>
 
-      <div className="mt-auto pt-4 border-t border-[#F0F0EC] flex items-center justify-between text-xs text-[#9CA3AF]">
-        <span className="flex items-center gap-1.5">
-          <span className="w-5 h-5 rounded-full bg-[#1B2340]/10 flex items-center justify-center text-[9px] font-semibold text-[#1B2340]">
-            {project.createdBy?.name?.charAt(0) || "?"}
-          </span>
-           {project.createdBy?._id === user?._id ? "You" : project.createdBy?.name}
-        </span>
-        <span className="font-medium text-[#6B7280]">{project.organization?.name}</span>
-      </div>
-    </Link>
-  ))}
-</div>
+                {/* Action row: View / Share / Download */}
+                <div className="flex items-center gap-2 mb-5">
+                  <button
+                   
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#E2E4EA] text-xs font-medium text-[#1B2340] hover:bg-[#1B2340] hover:text-white hover:border-[#1B2340] transition-colors duration-200"
+                  >
+                    <Eye size={13} />
+                   {project.viewCount} Views
+
+                  </button>
+
+                  <button
+                    onClick={(e) => handleShare(e, project)}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#E2E4EA] text-xs font-medium text-[#1B2340] hover:bg-[#1B2340] hover:text-white hover:border-[#1B2340] transition-colors duration-200"
+                  >
+                    {copiedId === project._id ? (
+                      <>
+                        <Check size={13} />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Share2 size={13} />
+                        Share
+                      </>
+                    )}
+                  </button>
+
+                  
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-[#F0F0EC] flex items-center justify-between text-xs text-[#9CA3AF]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#1B2340]/10 flex items-center justify-center text-[9px] font-semibold text-[#1B2340]">
+                      {project.createdBy?.name?.charAt(0) || "?"}
+                    </span>
+                    {project.createdBy?._id === user?._id ? "You" : project.createdBy?.name}
+                  </span>
+                  <span className="font-medium text-[#6B7280]">{project.organization?.name}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
