@@ -376,23 +376,29 @@ export async function getPublicProjects(req, res) {
 export async function getPublicProjectById(req, res) {
   try {
     const project = await projectModel
-      .findOne({ _id: req.params.id, status: "approved" })
-      .populate("createdBy", "name email")
-      .populate("assignedFaculty", "name email")
-      .populate("teamMembers", "name email")
-      .populate("organization", "name code");
+      .findOne({_id:req.params.id,status:"approved"})
+      .populate("createdBy","name")
+      .populate("organization","name code")
+      if(!project){
+        return res.status(404).json({
+          success:false,
+          message:"Project not found"
+        })
+      }
 
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: "Project not found.",
-      });
-    }
+      //if owner
+      const isOwnerViewing =req.user && project.createdBy._id.toString() === req.user._id.toString();
 
-    return res.status(200).json({
-      success: true,
-      project,
-    });
+      if(!isOwnerViewing){
+        project.viewCount = project.viewCount + 1;
+        await project.save();
+      }
+
+      return res.status(200).json({
+        success:true,
+        project
+      })  
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({
