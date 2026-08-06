@@ -79,6 +79,19 @@ export async function getProjectTimeline(req, res) {
     });
   }
 }
+const CATEGORY_COLORS = [
+  "#F0A868",
+  "#4C7CF0",
+  "#8B7CF0",
+  "#34D399",
+  "#F472B6",
+  "#FBBF24",
+  "#60A5FA",
+  "#A78BFA",
+  "#F87171",
+  "#2DD4BF",
+];
+
 export async function getLeaderboard(req, res) {
   try {
     const { category, organization, limit = 25, page = 1 } = req.query;
@@ -105,25 +118,66 @@ export async function getLeaderboard(req, res) {
         ? allApproved.reduce((sum, p) => sum + (p.averageRating || 0), 0) / allApproved.length
         : 0;
 
-    const categoryBreakdown = {};
+    // --- categories: build as an array with percent + color, not a plain object ---
+    const categoryCounts = {};
     allApproved.forEach((p) => {
-      categoryBreakdown[p.category] = (categoryBreakdown[p.category] || 0) + 1;
+      categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
     });
+    const totalCategoryCount = allApproved.length;
+    const categories = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1]) // largest slice first
+      .map(([name, count], i) => ({
+        name,
+        percent: totalCategoryCount > 0 ? Math.round((count / totalCategoryCount) * 100) : 0,
+        color: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+      }));
 
-    // NEW: count distinct students with at least one approved project
+    // count distinct students with at least one approved project
     const distinctParticipants = await projectModel.distinct("createdBy", { status: "approved" });
+
+    // --- topPerformers: highest rated + most viewed from the ranked pool ---
+    const highestRated = await projectModel
+      .findOne(filter)
+      .sort({ averageRating: -1, reviewCount: -1 })
+      .select("title averageRating");
+
+    const mostViewed = await projectModel
+      .findOne(filter)
+      .sort({ viewCount: -1 })
+      .select("title viewCount");
+
+    const topPerformers = {
+      highestRated: highestRated
+        ? { title: highestRated.title, value: highestRated.averageRating?.toFixed(1) }
+        : null,
+      mostViewed: mostViewed
+        ? { title: mostViewed.title, value: String(mostViewed.viewCount || 0) }
+        : null,
+      mostLiked: null, // not tracked yet
+      mostDownloaded: null, // not tracked yet
+    };
+
+    // --- attach a stats.views wrapper to each project so the frontend's StatPill picks it up ---
+    const projectsWithStats = projects.map((p) => ({
+      ...p.toObject(),
+      stats: {
+        views: p.viewCount || 0,
+      },
+    }));
 
     return res.status(200).json({
       success: true,
-      projects,
-      total,
-      page: Number(page),
-      totalPages: Math.ceil(total / limit),
+      projects: projectsWithStats,
+      topPerformers,
+      categories,
+      pagination: {
+        page: Number(page),
+        totalPages: Math.ceil(total / limit),
+      },
       stats: {
         totalRanked: total,
         avgRatingOverall: Math.round(avgRatingOverall * 100) / 100,
         totalParticipants: distinctParticipants.length,
-        categoryBreakdown,
       },
     });
   } catch (error) {
