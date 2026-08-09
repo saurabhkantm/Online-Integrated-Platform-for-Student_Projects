@@ -61,3 +61,17 @@ export async function getOrganizations(req, res) {
     });
   }
 }
+export async function deleteOrganization(req,res){
+  try{
+    const org = await organizationModel.findByIdAndDelete(req.params.id);
+    if (!org) {
+      return res.status(404).json({ success: false, message: "College not found." });
+    }
+    return res.status(200).json({ success: true, message: "College deleted." });
+  }catch(e){
+    return res.status(500).json({
+      success:false,
+      message:"server error!"
+    })
+  }
+}
