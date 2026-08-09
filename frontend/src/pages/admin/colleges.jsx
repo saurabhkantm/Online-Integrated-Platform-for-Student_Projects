@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../components/common/Navbar";
 import { Building2, Plus, X } from "lucide-react";
-import { getOrganization,setOrganization } from "../../services/organizationService.js";
+import { getOrganization, setOrganization ,deleteOrganization} from "../../services/organizationService.js";
 
 const ManageColleges = () => {
   const [organizations, setOrganizations] = useState([]);
@@ -46,6 +46,16 @@ const ManageColleges = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Delete this college? This cannot be undone.")) return;
+  try {
+    await deleteOrganization(id);
+    setOrganizations((prev) => prev.filter((o) => o._id !== id));
+  } catch (err) {
+    alert(err.response?.data?.message || "Failed to delete college.");
+  }
   };
 
   return (
@@ -141,6 +151,9 @@ const ManageColleges = () => {
                   </div>
                   <p className="font-serif text-lg text-[#1B2340] mb-1">{org.name}</p>
                   <p className="text-xs text-[#9CA3AF] uppercase tracking-wide">{org.code}</p>
+                  <button onClick={() => handleDelete(org._id)} className="text-red-500 hover:text-red-700 text-xs mt-2">
+                    Delete
+                  </button>
                 </div>
               ))}
             </div>

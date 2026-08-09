@@ -26,3 +26,8 @@ export const getLeaderboard = async ({ page = 1, limit = 10, category, organizat
   return res.data; 
 };
 
+export const deleteOrganization = async (id) => {
+  const res = await api.delete(`/api/organizations/${id}`);
+  return res.data;
+};
+
