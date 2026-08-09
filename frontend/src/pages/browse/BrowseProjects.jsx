@@ -230,7 +230,6 @@ const BrowseProjects = () => {
                   )}
                 </div>
 
-                {/* Action row: View / Share / Download */}
                 <div className="flex items-center gap-2 mb-5">
                   <button
                    

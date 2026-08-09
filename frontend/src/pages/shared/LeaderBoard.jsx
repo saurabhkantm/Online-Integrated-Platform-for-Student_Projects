@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
-import { getLeaderboard } from "../../services/OrganizationService.js";
+import { getLeaderboard } from "../../services/organizationService.js";
 import {
   Star,
   Trophy,
@@ -17,54 +17,30 @@ import {
   Bookmark,
   Share2,
   Crown,
+  Award,
   ChevronLeft,
   ChevronRight,
   RefreshCw,
-  SlidersHorizontal,
-  Sparkles,
   TrendingUp,
   BarChart3,
 } from "lucide-react";
 
-/**
- * ============================================================================
- * BACKEND CONTRACT — fields this page expects from getLeaderboard()
- * ============================================================================
- * Everything below has a safe fallback (—, 0, or a hidden section) if the
- * field is missing, so this page won't break against your current API.
- * But to fully match the design, getLeaderboard({ page, limit, range,
- * category, college, tech }) should eventually resolve to:
- *
- * {
- *   stats: {
- *     totalRanked: number,
- *     avgRatingOverall: number,
- *     avgRatingDeltaLabel: string,      // e.g. "+0.12 from last month"
- *     totalParticipants: number,
- *   },
- *   projects: [{
- *     _id, title, description, category, techStack: string[],
- *     averageRating: number, reviewCount: number,
- *     createdBy: { name }, organization: { name },
- *     stats: { views, likes, downloads, comments },
- *     rankChange: number,               // +1, -1, 0 (or null for "new")
- *     badge: "Featured" | "Trending" | null,
- *     iconColor: string,                // tailwind bg class for the avatar chip
- *   }],
- *   topPerformers: {
- *     highestRated:  { title, value },  // value e.g. "5.0"
- *     mostViewed:    { title, value },  // value e.g. "3.2K"
- *     mostLiked:     { title, value },
- *     mostDownloaded:{ title, value },
- *   },
- *   categories: [{ name, percent, color }],   // should sum to 100
- *   pagination: { page, totalPages },
- * }
- * ============================================================================
- */
+const medalConfig = (rank) => {
+  if (rank === 1) return { bg: "bg-[#F0A868]/20", color: "text-[#F0A868]" };
+  if (rank === 2) return { bg: "bg-[#C0C0C0]/25", color: "text-[#8A8A8A]" };
+  if (rank === 3) return { bg: "bg-[#CD7F32]/20", color: "text-[#CD7F32]" };
+  return null;
+};
 
-
-const medal = (rank) => (rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null);
+const Medal = ({ rank, size = 18, wrapperSize = "w-9 h-9" }) => {
+  const config = medalConfig(rank);
+  if (!config) return null;
+  return (
+    <span className={`${wrapperSize} rounded-full flex items-center justify-center shrink-0 ${config.bg}`}>
+      <Award size={size} className={config.color} />
+    </span>
+  );
+};
 
 const StatPill = ({ icon: Icon, value, tone = "text-[#6B7280]" }) => (
   <span className={`inline-flex items-center gap-1 text-xs ${tone}`}>
@@ -93,7 +69,6 @@ const RankChange = ({ delta }) => {
   );
 };
 
-// Lightweight dependency-free donut (percent-based pie via conic-gradient)
 const CategoryDonut = ({ categories }) => {
   if (!categories || categories.length === 0) return null;
   let cumulative = 0;
@@ -160,7 +135,7 @@ const LeaderboardPage = () => {
   }, [pagination.page, range]);
 
   const top3 = projects.slice(0, 3);
-  const podiumOrder = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3; // 2nd, 1st, 3rd
+  const podiumOrder = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
   const rest = projects.slice(3);
 
   return (
@@ -246,7 +221,6 @@ const LeaderboardPage = () => {
           </div>
         </div>
 
-        
         {loading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -287,9 +261,11 @@ const LeaderboardPage = () => {
                             : "border-[#E2E4EA] hover:shadow-md"
                         }`}
                       >
-                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-4xl">{medal(rank)}</span>
-                        <div className="w-16 h-16 rounded-full bg-[#1B2340]/5 flex items-center justify-center mt-3 mb-3 text-2xl">
-                          🌳
+                        <span className="absolute -top-4 left-1/2 -translate-x-1/2">
+                          <Medal rank={rank} size={18} wrapperSize="w-9 h-9" />
+                        </span>
+                        <div className="w-16 h-16 rounded-full bg-[#1B2340]/5 flex items-center justify-center mt-3 mb-3">
+                          <Trophy size={24} className="text-[#1B2340]/30" />
                         </div>
                         <h4 className="font-serif text-base font-semibold text-[#1B2340] mb-1 line-clamp-1">
                           {project.title}
@@ -303,9 +279,9 @@ const LeaderboardPage = () => {
                         </span>
                         <div className="flex items-center gap-3 text-[#9CA3AF]">
                           <StatPill icon={Eye} value={project.stats?.views ?? "—"} />
-                          <StatPill icon={Heart} value={project.stats?.likes ?? "—"} />
-                          <StatPill icon={Download} value={project.stats?.downloads ?? "—"} />
-                          <StatPill icon={MessageCircle} value={project.stats?.comments ?? "—"} />
+                          {/* <StatPill icon={Heart} value={project.stats?.likes ?? "—"} /> */}
+                          {/* <StatPill icon={Download} value={project.stats?.downloads ?? "—"} /> */}
+                          {/* <StatPill icon={MessageCircle} value={project.stats?.comments ?? "—"} /> */}
                         </div>
                       </Link>
                     );
@@ -337,8 +313,8 @@ const LeaderboardPage = () => {
                             <td className="px-5 py-4 text-[#9CA3AF] font-medium">{rank}</td>
                             <td className="px-3 py-4">
                               <Link to={`/projects/${project._id}`} className="flex items-center gap-3 min-w-0">
-                                <span className="w-8 h-8 rounded-lg bg-[#1B2340]/5 flex items-center justify-center text-sm shrink-0">
-                                  🌱
+                                <span className="w-8 h-8 rounded-lg bg-[#1B2340]/5 flex items-center justify-center shrink-0">
+                                  <Trophy size={14} className="text-[#1B2340]/30" />
                                 </span>
                                 <span className="min-w-0">
                                   <span className="flex items-center gap-2">
@@ -365,9 +341,9 @@ const LeaderboardPage = () => {
                             <td className="px-3 py-4 hidden lg:table-cell">
                               <div className="flex items-center gap-3">
                                 <StatPill icon={Eye} value={project.stats?.views ?? "—"} />
-                                <StatPill icon={Heart} value={project.stats?.likes ?? "—"} />
-                                <StatPill icon={Download} value={project.stats?.downloads ?? "—"} />
-                                <StatPill icon={MessageCircle} value={project.stats?.comments ?? "—"} />
+                                {/* <StatPill icon={Heart} value={project.stats?.likes ?? "—"} /> */}
+                                {/* <StatPill icon={Download} value={project.stats?.downloads ?? "—"} /> */}
+                                {/* <StatPill icon={MessageCircle} value={project.stats?.comments ?? "—"} /> */}
                               </div>
                             </td>
                             <td className="px-3 py-4">
@@ -375,15 +351,15 @@ const LeaderboardPage = () => {
                             </td>
                             <td className="px-5 py-4">
                               <div className="flex items-center justify-end gap-2 text-[#9CA3AF]">
-                                <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
+                                {/* <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
                                   <Eye size={15} />
-                                </button>
-                                <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
+                                </button> */}
+                                {/* <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
                                   <Bookmark size={15} />
-                                </button>
-                                <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
+                                </button> */}
+                                {/* <button className="p-1.5 rounded-md hover:bg-[#1B2340]/5 hover:text-[#1B2340]">
                                   <Share2 size={15} />
-                                </button>
+                                </button> */}
                               </div>
                             </td>
                           </tr>
@@ -444,8 +420,7 @@ const LeaderboardPage = () => {
                     {[
                       { key: "highestRated", label: "Highest Rated", icon: Star, tone: "text-[#F0A868] bg-[#F0A868]/15" },
                       { key: "mostViewed", label: "Most Viewed", icon: Eye, tone: "text-[#4C7CF0] bg-[#4C7CF0]/10" },
-                      { key: "mostLiked", label: "Most Liked", icon: Heart, tone: "text-rose-500 bg-rose-500/10" },
-                      { key: "mostDownloaded", label: "Most Downloaded", icon: Download, tone: "text-emerald-600 bg-emerald-500/10" },
+                     
                     ].map(({ key, label, icon: Icon, tone }) => (
                       <div key={key} className="flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${tone}`}>
