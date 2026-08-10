@@ -3,6 +3,7 @@ import {
   createOrganization,
   deleteOrganization,
   getOrganizations,
+  updateOrganization,
 } from "../controllers/organization.controller.js";
 
 const organizationRouter = express.Router();
