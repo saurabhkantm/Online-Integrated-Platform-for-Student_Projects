@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate ,useNavigate} from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import { getLeaderboard } from "../../services/organizationService.js";
 import {
@@ -48,7 +48,6 @@ const StatPill = ({ icon: Icon, value, tone = "text-[#6B7280]" }) => (
     {value}
   </span>
 );
-
 const RankChange = ({ delta }) => {
   if (delta === null || delta === undefined) {
     return <span className="text-xs text-[#9CA3AF]">New</span>;
@@ -113,6 +112,8 @@ const LeaderboardPage = () => {
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
   const [range, setRange] = useState("All Time");
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -451,8 +452,8 @@ const LeaderboardPage = () => {
                 {categories.length > 0 ? (
                   <>
                     <CategoryDonut categories={categories} />
-                    <button className="w-full mt-4 py-2 rounded-lg bg-[#F7F5F0] text-xs font-medium text-[#374151] hover:bg-[#EFEDE6] transition-colors">
-                      View All Categories
+                    <button onClick={()=>{Navigate("/browse-project")}} className="w-full mt-4 py-2 rounded-lg bg-[#F7F5F0] text-xs font-medium text-[#374151] hover:bg-[#EFEDE6] transition-colors">
+                      View All Projects
                     </button>
                   </>
                 ) : (

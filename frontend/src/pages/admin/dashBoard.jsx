@@ -42,7 +42,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-[#F7F5F0]">
       <Navbar />
-      <div className="p-8 md:p-14 pt-32">
+      <div className="p-8 pt-30 pl-14 pr-14">
         <span className="text-xs tracking-[0.2em] uppercase text-[#F0A868] font-semibold">Admin Dashboard</span>
         <h1 className="font-serif text-3xl text-[#1B2340] mt-2">Welcome{user?.name ? `, ${user.name}` : ""}</h1>
         <p className="text-sm text-[#6B7280] mt-2 max-w-md">
