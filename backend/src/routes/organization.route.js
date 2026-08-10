@@ -9,6 +9,6 @@ const organizationRouter = express.Router();
 
 organizationRouter.post("/setOrg", createOrganization);
 organizationRouter.get("/getOrg", getOrganizations);
-organizationRouter.post("/:id",deleteOrganization);
+organizationRouter.delete("/:id",deleteOrganization);
 
 export default organizationRouter;
