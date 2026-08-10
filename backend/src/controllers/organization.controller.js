@@ -75,3 +75,35 @@ export async function deleteOrganization(req,res){
     })
   }
 }
+
+export async function updateOrganization(req,res){
+  try{
+    const {name,code} = req.body;
+    if(!name || !code){
+      return res.status(400).json({
+        success:false,
+        message:"All fields are required!"
+      })
+    }
+
+    const org = await organizationModel.findByIdAndUpdate(req.params.id,{name,code},{new:true});
+    if(!org){
+      return res.status(404).json({
+        success:false,
+        message:"College not found!"
+      })
+    }
+
+    org.save();
+    return res.status(200).json({
+      success:true,
+      message:"College updated successfully!",
+      org
+    })
+  }catch(e){
+    return res.status(500).json({
+      success:false,
+      message:"server error!"
+    })
+  }
+}
