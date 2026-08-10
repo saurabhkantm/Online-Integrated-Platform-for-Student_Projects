@@ -28,6 +28,12 @@ export const getLeaderboard = async ({ page = 1, limit = 10, category, organizat
 
 export const deleteOrganization = async (id) => {
   const res = await api.delete(`/api/organizations/${id}`);
+  console.log(res);
+  return res.data;
+};
+export const updateOrganization = async (id,data) => {
+  const res = await api.put(`/api/organizations/${id}`,data);
+  console.log(res);
   return res.data;
 };
 
