@@ -8,6 +8,7 @@ import projectActivityRouter from "./routes/projectActivity.route.js";
 import facultyRouter from "./routes/faculty.route.js";
 import reviewRouter from "./routes/reviews.route.js";
 import adminRouter from "./routes/admin.route.js";
+import chatRouter from "./routes/chat.route.js";
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use("/api/projects", projectRouter);
 app.use("/api/studentprojects",projectActivityRouter);
 app.use("/api/faculty",facultyRouter);
 app.use("/api/reviews",reviewRouter);
+app.use("/api/chat",chatRouter);
 
 export default app;
