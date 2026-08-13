@@ -13,6 +13,9 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState(null);
 
+
+  console.log("data is:", data);
+
   const fetchData = async () => {
     try {
       const result = await getAdminOverview();
@@ -72,8 +75,8 @@ const AdminDashboard = () => {
           </Link>
         </div>
 
-        {/* Pending approvals */}
-        {!loading && data?.pendingProjects?.length > 0 && (
+       
+        {/* {!loading && data?.pendingProjects?.length > 0 && (
           <div className="mt-10">
             <h2 className="font-serif text-xl text-[#1B2340] mb-4">Pending approvals</h2>
             <div className="rounded-xl bg-white border border-[#E2E4EA] overflow-hidden">
@@ -82,7 +85,7 @@ const AdminDashboard = () => {
                   <tr className="border-b border-[#E2E4EA] text-left text-xs text-[#6B7280]">
                     <th className="p-4">Project</th>
                     <th className="p-4">Student</th>
-                    <th className="p-4">College</th>
+                   
                     <th className="p-4">Flag</th>
                   </tr>
                 </thead>
@@ -91,8 +94,7 @@ const AdminDashboard = () => {
                     <tr key={p._id} className="border-b last:border-0 border-[#F0F0EC] hover:bg-[#F7F5F0] transition">
                       <td className="p-4 font-medium text-[#1B2340]">{p.title}</td>
                       <td className="p-4 text-[#6B7280]">{p.createdBy?.name}</td>
-                      <td className="p-4 text-[#6B7280]">{p.organization?.name}</td>
-                      <td className="p-4">
+                                         <td className="p-4">
                         {p.plagiarismFlagged && (
                           <span className="flex items-center gap-1 text-red-600 text-xs">
                             <ShieldAlert size={12} /> {p.plagiarismScore}%
@@ -105,7 +107,7 @@ const AdminDashboard = () => {
               </table>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
