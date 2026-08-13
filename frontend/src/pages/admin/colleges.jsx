@@ -104,7 +104,7 @@ const ManageColleges = () => {
         code: editCode.trim().toUpperCase(),
       });
       setOrganizations((prev) =>
-        prev.map((o) => (o._id === id ? res.organization : o))
+        prev.map((o) => (o._id === id ? res.org: o))
       );
       setEditingId(null);
     } catch (err) {
