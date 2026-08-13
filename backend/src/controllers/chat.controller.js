@@ -277,7 +277,7 @@ Please check your dashboard or contact your faculty member.
 `;
 
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.5-flash-lite",
     systemInstruction: SYSTEM_PROMPT,
 });
 
@@ -307,7 +307,7 @@ export async function chatWithUser(req, res) {
         console.log(e);
         return res.status(500).json({
             success: false,
-            message: "server error"
+            message: e.message
         })
     }
 }

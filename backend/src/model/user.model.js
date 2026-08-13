@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema(
       ref: "organization",
       required: [true, "Organization is required"],
     },
+    suspended: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
