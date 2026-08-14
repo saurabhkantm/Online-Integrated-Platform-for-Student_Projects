@@ -110,20 +110,20 @@ const StudentDashboard = () => {
             <FileText size={15} />
             View my projects
           </Link>
-          <Link
+          {/* <Link
             to="/browse-project"
             className="flex items-center gap-2 px-6 py-3 rounded-lg border border-[#E2E4EA] text-[#4A5568] text-sm font-medium hover:border-[#1B2340] hover:text-[#1B2340] transition"
           >
             <Compass size={15} />
             Browse projects
-          </Link>
-          <Link
+          </Link> */}
+          {/* <Link
             to="/leaderboard"
             className="flex items-center gap-2 px-6 py-3 rounded-lg border border-[#E2E4EA] text-[#4A5568] text-sm font-medium hover:border-[#1B2340] hover:text-[#1B2340] transition"
           >
             <Trophy size={15} />
             Leaderboard
-          </Link>
+          </Link> */}
         </div>
 
         {/* Recent activity */}

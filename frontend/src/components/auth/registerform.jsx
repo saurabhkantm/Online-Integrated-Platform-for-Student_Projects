@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Building2, Mail, Lock, ChevronDown } from "lucide-react";
+import { User, Building2, Mail, Lock, ChevronDown ,Eye, EyeOff} from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getOrganization } from "../../services/organizationService.js";
 
@@ -11,6 +11,7 @@ const RegisterForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
   const [organization, setOrganization] = useState("");
   const [organizations, setOrganizations] = useState([]);
   const [error, setError] = useState("");
@@ -127,16 +128,25 @@ const RegisterForm = () => {
         />
       </div>
 
-      <div className="relative">
+       <div className="relative w-full">
         <Lock size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className={inputBase}
         />
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          tabIndex={-1}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#1B2340] transition-colors"
+        >
+          {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+        </button>
       </div>
 
       {error && (

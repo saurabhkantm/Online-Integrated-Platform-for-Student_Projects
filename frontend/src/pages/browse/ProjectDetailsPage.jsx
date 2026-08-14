@@ -81,31 +81,33 @@ const ProjectDetailPage = () => {
             </span>
           </div>
 
-          {hasRating ? (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
-              <Star size={13} className="fill-[#F0A868] text-[#F0A868]" />
-              <span className="text-xs font-semibold text-[#1B2340]">
-                {project.averageRating?.toFixed(1)}
-              </span>
-              <span className="text-xs text-[#9CA3AF]">
-                ({project.reviewCount})
-              </span>
+          <div className="flex items-center gap-3">
+            {hasRating ? (
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
+                <Star size={13} className="fill-[#F0A868] text-[#F0A868]" />
+                <span className="text-xs font-semibold text-[#1B2340]">
+                  {project.averageRating?.toFixed(1)}
+                </span>
+                <span className="text-xs text-[#9CA3AF]">
+                  ({project.reviewCount})
+                </span>
+              </div>
+            ) : (
+              <span className="text-xs text-[#9CA3AF] px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
+                No reviews yet
+              </span>
+            )}
+
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
               <Eye size={13} className="text-[#9CA3AF]" />
               <span className="text-xs font-semibold text-[#1B2340]">
                 {project.viewCount || 0}
               </span>
               <span className="text-xs text-[#9CA3AF]">views</span>
             </div>
-            </div>
-          ) : (
-            <span className="text-xs text-[#9CA3AF] px-3 py-1 rounded-full bg-white border border-[#1B2340]/10">
-              No reviews yet
-            </span>
-          )}
-
+          </div>
         </div>
-        
+
         {/* Title */}
         <h1 className="font-serif text-4xl md:text-5xl leading-[1.1] text-[#1B2340] mb-10 max-w-3xl">
           {project.title}
@@ -150,19 +152,40 @@ const ProjectDetailPage = () => {
               </p>
 
               <div className="space-y-4">
+                {/* Created by (single owner) */}
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#1B2340]/5 flex items-center justify-center shrink-0">
                     <span className="text-[10px] font-semibold text-[#1B2340]">
-                      {project.createdBy?.name?.charAt(0) || "?"}
+                      {project.createdBy?.name?.charAt(0)}
                     </span>
                   </div>
                   <div className="min-w-0">
                     <p className="text-[11px] text-[#9CA3AF] mb-0.5">Created by</p>
                     <p className="text-sm text-[#1B2340] font-medium truncate">
-                      {isOwner ? "You" : project.createdBy?.name}
+                      {project.createdBy?.name}
                     </p>
                   </div>
                 </div>
+
+                {/* Team members (rest of the group, excluding creator) */}
+                {project.teamMembers?.length > 0 && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#1B2340]/5 flex items-center justify-center shrink-0">
+                      <User size={13} className="text-[#1B2340]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] text-[#9CA3AF] mb-0.5">Team members</p>
+                      <p className="text-sm text-[#1B2340] font-medium">
+                        {project.teamMembers.map((e, key) => (
+                          <span key={e._id || key}>
+                            {e.name}
+                            {key < project.teamMembers.length - 1 && ", "}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {project.organization?.name && (
                   <div className="flex items-start gap-3">
@@ -200,7 +223,7 @@ const ProjectDetailPage = () => {
                     <div className="min-w-0">
                       <p className="text-[11px] text-[#9CA3AF] mb-0.5">Team size</p>
                       <p className="text-sm text-[#1B2340] font-medium">
-                        {project.teamMembers.length + 1} members
+                        {project.teamMembers.length } members
                       </p>
                     </div>
                   </div>

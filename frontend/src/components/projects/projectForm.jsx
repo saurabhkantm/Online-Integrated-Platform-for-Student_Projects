@@ -46,6 +46,7 @@ const ProjectForm = () => {
           getUsersByRole("faculty"),
           getUsersByRole("student"),
         ]);
+        console.log("faculties are:",faculty);
         setFacultyList(faculty || []);
         setStudentList(students || []);
       } catch (err) {

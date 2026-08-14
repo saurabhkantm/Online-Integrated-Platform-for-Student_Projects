@@ -58,7 +58,9 @@ const BrowseProjects = () => {
         if (organization) filters.organization = organization;
 
         const data = await getPublicProjects(filters);
+        console.log("data is",data);
         setProjects(data || []);
+       
       } catch (err) {
         console.error("Failed to load projects", err);
       } finally {
@@ -260,14 +262,11 @@ const BrowseProjects = () => {
                   
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-[#F0F0EC] flex items-center justify-between text-xs text-[#9CA3AF]">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-5 h-5 rounded-full bg-[#1B2340]/10 flex items-center justify-center text-[9px] font-semibold text-[#1B2340]">
-                      {project.createdBy?.name?.charAt(0) || "?"}
-                    </span>
-                    {project.createdBy?._id === user?._id ? "You" : project.createdBy?.name}
+                <div className="mt-auto pt-4 border-t border-[#F0F0EC] flex items-center justify-between text-xs text-[#9CA3AF] gap-2">
+                  <span className="truncate">
+                    Created by : {project.createdBy?.name}
                   </span>
-                  <span className="font-medium text-[#6B7280]">{project.organization?.name}</span>
+                  <span className="font-medium text-[#6B7280] shrink-0">{project.organization?.name}</span>
                 </div>
               </div>
             ))}

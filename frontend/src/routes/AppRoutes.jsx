@@ -14,6 +14,7 @@ import HomePage from '../pages/shared/Homepage'
 import AboutUs from '../pages/shared/Aboutus'
 import LoginForm from '../pages/auth/Login'
 import LeaderboardPage from '../pages/shared/LeaderBoard'
+import ForgotPassword from '../pages/auth/ForegetPassword'
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       {/* auth routes */}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<LoginForm/>}/>
+      <Route path="/forgot-password" element={<ForgotPassword/>}/>
 
       {/* role protected route groups */}
       <Route element={<ProtectedRoute allowedRoles={['student']} />}>
