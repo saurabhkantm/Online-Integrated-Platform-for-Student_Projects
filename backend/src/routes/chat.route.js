@@ -4,6 +4,6 @@ import { chatWithUser } from "../controllers/chat.controller.js";
 
 const chatRouter = express.Router();
 
-chatRouter.post("/send",authMiddleware,chatWithUser);
+chatRouter.post("/send",chatWithUser);
 
 export default chatRouter;
