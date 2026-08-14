@@ -16,6 +16,8 @@ export default async function createProject(req, res) {
     documentation,
   } = req.body;
 
+  console.log("req",req.body)
+
   if (
     !title ||
     !description ||
@@ -357,6 +359,7 @@ export async function getPublicProjects(req, res) {
     const projects = await projectModel
       .find(filter)
       .populate("createdBy", "name")
+      .populate("teamMembers","name")
       .populate("organization", "name code")
       .sort({ createdAt: -1 });
 
@@ -378,7 +381,9 @@ export async function getPublicProjectById(req, res) {
     const project = await projectModel
       .findOne({_id:req.params.id,status:"approved"})
       .populate("createdBy","name")
-      .populate("organization","name code")
+      .populate("teamMembers","name")
+      .populate("organization","name code");
+
       if(!project){
         return res.status(404).json({
           success:false,

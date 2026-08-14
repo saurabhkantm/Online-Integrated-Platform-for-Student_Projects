@@ -8,10 +8,14 @@ export async function getUsersByRole(req,res) {
         if(role){
             filter.role = role;
         } 
+
+        console.log("filtera",filter)
         const users = await userModel
         .find(filter)
         .select("name email role")
         .sort({name:1});
+
+        console.log("userss",users)
 
         return res.status(200).json({
             success:true,
